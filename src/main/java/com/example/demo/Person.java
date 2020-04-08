@@ -22,4 +22,8 @@ public class Person {
     public String getFirstName() {
         return firstName;
     }
+
+    public Long getId() {
+        return id;
+    }
 }
