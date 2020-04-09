@@ -12,7 +12,7 @@ import javax.persistence.Table;
 public class UserDB {
 	
 	@Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
  
     @Column(nullable = false, unique = true)
@@ -22,6 +22,9 @@ public class UserDB {
     
     private String enabled;
 
+    public UserDB() {
+	}
+    
 	public String getUsername() {
 		return username;
 	}

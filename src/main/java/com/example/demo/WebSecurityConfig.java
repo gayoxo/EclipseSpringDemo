@@ -29,7 +29,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 			.authorizeRequests()
-				.antMatchers("/", "/home").permitAll()
+				.antMatchers("/", "/home","/createuser").permitAll()
 				.anyRequest().authenticated()
 				.and()
 			.formLogin()
@@ -52,8 +52,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
     public PasswordEncoder encoder() {
 		BCryptPasswordEncoder sal = new BCryptPasswordEncoder(11);
-		System.out.println(sal.encode("123"));
-        return sal;
+		System.out.println(sal.encode("platano"));
+		String result = sal.encode("platano");
+		System.out.println(sal.matches("platano", result));
+		return sal;
     }
 	
 	@Override
@@ -63,9 +65,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .authenticationProvider(authenticationProvider())
             .jdbcAuthentication()
-            .dataSource(dataSource);
+            .dataSource(dataSource)
+//            .withUser("user").password(encoder().encode("password")).roles("USER")
+            ;
 
+       
     }
+	
 	
 
 	
