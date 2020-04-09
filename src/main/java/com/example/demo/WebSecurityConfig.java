@@ -1,18 +1,30 @@
 package com.example.demo;
 
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+	
+	@Autowired
+	 private MyUserDetailsService userDetailsService;
+
+	    @Autowired
+	    private DataSource dataSource;
+	
+	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
@@ -28,14 +40,33 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.permitAll();
 	}
 
+	
 	@Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        final DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(encoder());
+        return authProvider;
+    }
+	
+	@Bean
+    public PasswordEncoder encoder() {
+		BCryptPasswordEncoder sal = new BCryptPasswordEncoder(11);
+		System.out.println(sal.encode("123"));
+        return sal;
+    }
+	
 	@Override
-	public UserDetailsService userDetailsService() {
-		UserDetails user = User.withUsername("admin")
-			     .password("{bcrypt}$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG")
-			     .roles("USER")
-			     .build();
+    protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService)
+            .passwordEncoder(encoder())
+            .and()
+            .authenticationProvider(authenticationProvider())
+            .jdbcAuthentication()
+            .dataSource(dataSource);
 
-		return new InMemoryUserDetailsManager(user);
-	}
+    }
+	
+
+	
 }
