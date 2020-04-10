@@ -18,6 +18,12 @@ INSERT INTO users (username, password, enabled)
   values ('user',
     '$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a',
     1);
+    
+INSERT INTO users (username, password, enabled)
+  values ('gayoxo@gmail.com',
+    '$2y$12$DXZWIhNRuL7gcNCC4YOWC.ukwpn5Gy5dxWx8wU2Ca7bh8PR5zrjgS',
+    1);    
+    
  
 INSERT INTO authorities (username, authority)
   values ('user', 'ROLE_USER');
